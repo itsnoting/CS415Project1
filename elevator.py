@@ -90,8 +90,8 @@ class elevator:
                 else:
                     requests.append(request)
         except ValueError:
+            self._requests = requests
             return requests
-
 
     def go_to_floor(self, floor):
         if isinstance(floor, int):
