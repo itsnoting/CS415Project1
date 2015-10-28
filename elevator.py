@@ -6,6 +6,7 @@ from time import sleep
 
 
 class Direction(Enum):
+    Idle = 0
     Up = 1
     Down = 2
 
@@ -35,7 +36,7 @@ class Elevator:
         self._up = []
         self._down = []
         self._num_floors = num_floors
-        self._direction = Direction.Up
+        self._direction = Direction.Idle
 
     def __str__(self):
         if os.name == 'nt':
@@ -60,46 +61,83 @@ class Elevator:
         return result
 
     def _closest_request(self):
-        closest = sys.maxsize
-
+        closest = None
+        closest_requests = []
         if self._direction == Direction.Up:
+            closest = sys.maxsize
             for request in self._requests:
                 diff = request[0] - self._current_floor
-                if 0 < diff <= (closest - self._current_floor):
+                print 0 < diff < (closest - self._current_floor)
+                if 0 <= diff <= (closest - self._current_floor):
                     closest = request[0]
-
+                    closest_requests.append(request)
         elif self._direction == Direction.Down:
+            closest = -sys.maxsize
             for request in self._requests:
                 diff = self._current_floor - request[0]
-                if 0 < diff <= (self._current_floor - closest):
+                if 0 <= diff <= (self._current_floor - closest):
                     closest = request[0]
+                    closest_requests.append(request)
+        elif self._direction == Direction.Idle:
+            closest = sys.maxsize
+            for request in self._requests:
+                diff = abs(request[0] - self._current_floor)
+                print 0 < diff < (closest - self._current_floor)
+                if 0 <= diff <= (closest - self._current_floor):
+                    closest = request[0]
+                    closest_requests.append(request)
+            if closest_requests[0][0] > closest_requests[0][1]:
+                self._direction = Direction.Down
+            if closest_requests[0][0] < closest_requests[0][1]:
+                self._direction = Direction.Up
 
+        for closest_request in closest_requests:
+            self._requests.remove(closest_request)
+            if self._direction == Direction.Up:
+                self._up.append(closest_request[1])
+            elif self._direction == Direction.Down:
+                self._down.append(closest_request[1])
         return closest
 
     def _go_to_floor(self, floor):
         if isinstance(floor, int):
             if floor > self._current_floor:
+                print (floor - self._current_floor)
                 for i in range(floor - self._current_floor):
                     self._go_up()
                     self._animate()
-                self._up.remove(floor)
+                try:
+                    while True:
+                        self._up.remove(floor)
+                except ValueError:
+                    self._up.sort()
             elif floor < self._current_floor:
                 for i in range(self._current_floor - floor):
                     self._go_down()
                     self._animate()
-                self._down.remove(floor)
+                try:
+                    while True:
+                        self._down.remove(floor)
+                except ValueError:
+                    self._down.sort(reverse=True)
 
     def _add_request(self, request):
         if len(request) == 2:
             self._requests.append(request)
 
     def _go_up(self):
+        for request in self._requests:
+            if request[0] == self._current_floor and request[0] < request[1]:
+                self._up.append(request[1])
+                self._requests.remove(request)
         self._current_floor += 1
-        self._up.sort()
 
     def _go_down(self):
+        for request in self._requests:
+            if request[0] == self._current_floor and request[0] > request[1]:
+                self._down.append(request[1])
+                self._requests.remove(request)
         self._current_floor -= 1
-        self._down.sort(reverse=True)
 
     def _animate(self):
         print self
@@ -117,6 +155,9 @@ class Elevator:
             while True:
                 raw_request = raw_input("What is your request?: \n")
                 request = [int(num.strip()) for num in raw_request.split(',')]
+                for i in range(2):
+                    if request[i] < 1 or request[i] > self._num_floors:
+                        print "Invalid input"
                 if not len(request) == 2:
                     print "Invalid input"
                 else:
@@ -124,5 +165,27 @@ class Elevator:
         except ValueError:
             self._requests = requests
             return requests
+
+    def execute_request(self):
+        while self._requests or self._up or self._down:
+            # Initial request
+            if not self._up and not self._down:
+                self._direction = Direction.Idle
+                self._go_to_floor(self._closest_request())
+            # If there are no more up requests, then switch to satisfy down requests
+            elif self._up and not self._down and not self._direction == Direction.Up:
+                print "Going up!"
+                self._direction = Direction.Up
+
+            elif self._up and self._direction == Direction.Up:
+                for request in self._up:
+                    self._go_to_floor(request)
+            elif self._down and not self._up and not self._direction == Direction.Down:
+                print "Going down!"
+                self._direction = Direction.Down
+            elif self._down and self._direction == Direction.Down:
+                for request in self._down:
+                    self._go_to_floor(request)
+
 
 
