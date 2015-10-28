@@ -4,7 +4,8 @@ import time
 from elevator import Elevator
 
 def main():
-    elevator = Elevator(10)
+    num_floors = input("How many floors would you like?\n")
+    elevator = Elevator(num_floors)
     elevator.get_request()
     print elevator
     time.sleep(1)
