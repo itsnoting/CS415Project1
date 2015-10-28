@@ -1,10 +1,9 @@
 __author__ = 'Kevin Ting'
-
-from elevator import elevator as Elevator
+import os
+from elevator import Elevator
 
 def main():
     elevator = Elevator(10)
-    print elevator
     elevator.get_request()
     print elevator
 
