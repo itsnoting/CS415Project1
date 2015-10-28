@@ -106,13 +106,11 @@ class Elevator:
                     self._go_up()
                     self._animate()
                 self._up = filter(lambda a: a != floor, self._up)
-                self._up.sort()
             elif floor < self._current_floor:
                 for i in range(self._current_floor - floor):
                     self._go_down()
                     self._animate()
                 self._down = filter(lambda a: a != floor, self._down)
-                self._down.sort(reverse=True)
 
     def _add_request(self, request):
         if len(request) == 2:
@@ -141,7 +139,9 @@ class Elevator:
         self._current_floor -= 1
 
     def _animate(self):
+        print self._requests
         print self._up
+        print self._down
         print self
         sleep(1)
 
