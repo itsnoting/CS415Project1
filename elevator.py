@@ -82,7 +82,6 @@ class Elevator:
             closest = sys.maxsize
             for request in self._requests:
                 diff = abs(request[0] - self._current_floor)
-                print 0 < diff < (closest - self._current_floor)
                 if 0 <= diff <= (closest - self._current_floor):
                     closest = request[0]
                     closest_requests.append(request)
@@ -92,11 +91,12 @@ class Elevator:
                 self._direction = Direction.Up
 
         for closest_request in closest_requests:
-            self._requests.remove(closest_request)
-            if self._direction == Direction.Up:
-                self._up.append(closest_request[1])
-            elif self._direction == Direction.Down:
-                self._down.append(closest_request[1])
+            if closest_request[0] == self._current_floor:
+                self._requests.remove(closest_request)
+                if self._direction == Direction.Up:
+                    self._up.append(closest_request[1])
+                elif self._direction == Direction.Down:
+                    self._down.append(closest_request[1])
         return closest
 
     def _go_to_floor(self, floor):
@@ -104,7 +104,6 @@ class Elevator:
         self._down.sort(reverse=True)
         if isinstance(floor, int):
             if floor > self._current_floor:
-                print (floor - self._current_floor)
                 for i in range(floor - self._current_floor):
                     self._go_up()
                     self._animate()
@@ -123,14 +122,22 @@ class Elevator:
         for request in self._requests:
             if request[0] == self._current_floor and request[0] < request[1]:
                 self._up.append(request[1])
+                self._up.sort()
                 self._requests.remove(request)
+        if self._up:
+            if self._up[0] == self._current_floor:
+                self._up = filter(lambda a: a != self._current_floor, self._up)
         self._current_floor += 1
 
     def _go_down(self):
         for request in self._requests:
             if request[0] == self._current_floor and request[0] > request[1]:
                 self._down.append(request[1])
+                self._sort(reverse=True)
                 self._requests.remove(request)
+        if self._down:
+            if self._down[0] == self._current_floor:
+                self._down = filter(lambda a: a != self._current_floor, self._down)
         self._current_floor -= 1
 
     def _animate(self):
