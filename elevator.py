@@ -44,13 +44,18 @@ class Elevator:
         else:
             os.system('clear')
         result = ""
+        num_floor = len(self._up) + len(self._down)
+        if num_floor < 10:
+            num_floor = '0' + str(num_floor)
+        else:
+            num_floor = str(num_floor)
         for i in range(self._num_floors, 0, -1):
             floor_requests = []
             for request in self._requests:
                 if request[0] == i:
                     floor_requests.append(request)
             if i == self._current_floor:
-                result += str(i) + "\t||----[" + str(len(self._up) + len(self._down)) + "]----||\t"
+                result += str(i) + "\t||----[" + num_floor + "]----||\t"
                 for request in floor_requests:
                     result += ' ' + str(request[1])
             else:
@@ -168,6 +173,8 @@ class Elevator:
                     requests.append(request)
         except ValueError:
             self._requests = requests
+            if raw_request == "reset":
+                self._go_to_floor(1)
             return requests
 
     def execute_request(self):
