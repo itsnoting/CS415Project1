@@ -51,11 +51,11 @@ class Elevator:
                 if request[0] == i:
                     floor_requests.append(request)
             if i == self._current_floor:
-                result += str(i) + "\t||----[0]----||\t"
+                result += str(i) + "\t||----[" + str(len(self._up) + len(self._down)) + "]----||\t"
                 for request in floor_requests:
                     result += ' ' + str(request[1])
             else:
-                result += str(i) + "\t||-----------||\t"
+                result += str(i) + "\t||------------||\t"
                 for request in floor_requests:
                     result += ' ' + str(request[1])
             result += '\n'
