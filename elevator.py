@@ -38,6 +38,7 @@ class Elevator:
         self._num_floors = num_floors
         self._direction = Direction.Idle
 
+
     def __str__(self):
         if os.name == 'nt':
             os.system('CLS')
