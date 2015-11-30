@@ -17,6 +17,9 @@ class Request:
         self.out_floor = out_floor
         self.in_elevator = False
 
+    def __str__(self):
+        return "<" + self.in_floor + "=>" + self.out_floor + ' ' + self.in_elevator + ">"
+
 
 class Elevator:
 
@@ -96,19 +99,22 @@ class Elevator:
 
     def visiting(self):
         if self._direction == Direction.Up:
-            for r in self._up:
+            for r in self._up[:]:
                 if r.in_elevator:
                     if r.out_floor == self._current_floor:
                         self._up.remove(r)
                 else:
                     # Not in elevator
                     if r.in_floor == self._current_floor:
+                        print "<" + str(r.in_floor) + "=>" + str(r.out_floor) + ' ' + str(r.in_elevator) + ">"
+
                         r.in_elevator = True
+
             if not self._up and self._down:
                 self._direction = Direction.Down
 
         elif self._direction == Direction.Down:
-            for r in self._down:
+            for r in self._down[:]:
                 if r.in_elevator:
                     if r.out_floor == self._current_floor:
                         self._down.remove(r)
