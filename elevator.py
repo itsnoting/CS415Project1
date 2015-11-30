@@ -30,7 +30,7 @@ class Elevator:
     # go down:          Decrements the elevator by one floor
     # animate:          Animates the elevator's execution
     # ========================================================================
-    def __init__(self, num_floors = 20, current_floor = 1):
+    def __init__(self, num_floors=20, current_floor=1):
         self._current_floor = current_floor
         self._requests = []
         self._up = []
@@ -138,7 +138,7 @@ class Elevator:
         for request in self._requests:
             if request[0] == self._current_floor and request[0] > request[1]:
                 self._down.append(request[1])
-                self._sort(reverse=True)
+                self._down.sort(reverse=True)
                 self._requests.remove(request)
         if self._down:
             if self._down[0] == self._current_floor:
