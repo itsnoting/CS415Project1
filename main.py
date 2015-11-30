@@ -10,8 +10,8 @@ def main():
         while True:
             elevator.get_request()
             print elevator
-            #time.sleep(1)
-            #elevator.execute_request()
+            time.sleep(1)
+            elevator.execute_request()
             #print elevator
     except KeyboardInterrupt:
         print "Exiting elevator simulator...."
