@@ -104,6 +104,14 @@ class Elevator:
                     self._down.append(closest_request[1])
         return closest
 
+    def _highest_down(self):
+        highest = 0
+        for request in self._requests:
+            if request[0] - request[1] > 0:
+                if request[0] > highest:
+                    highest = request[0]
+        return highest
+
     def _go_to_floor(self, floor):
         self._up.sort()
         self._down.sort(reverse=True)
@@ -179,24 +187,64 @@ class Elevator:
 
     def execute_request(self):
         while self._requests or self._up or self._down:
+            if self._current_floor == 9:
+                print 9
             # Initial request
-            if not self._up and not self._down:
-                self._direction = Direction.Idle
-                self._go_to_floor(self._closest_request())
-            # If there are no more up requests, then switch to satisfy down requests
-            elif self._up and not self._down and not self._direction == Direction.Up:
-                print "Going up!"
-                self._direction = Direction.Up
+            if self._direction == Direction.Up:
+                if self._up:
+                    for request in self._up:
+                        self._go_to_floor(request)
+                else:
+                    if self._down:
+                        self._direction = Direction.Down
+                        for request in self._down:
+                            self._go_to_floor(request)
+                    else:
+                        self._direction = Direction.Idle
 
-            elif self._up and self._direction == Direction.Up:
-                for request in self._up:
-                    self._go_to_floor(request)
-            elif self._down and not self._up and not self._direction == Direction.Down:
-                print "Going down!"
-                self._direction = Direction.Down
-            elif self._down and self._direction == Direction.Down:
-                for request in self._down:
-                    self._go_to_floor(request)
+            elif self._direction == Direction.Down:
+                if self._down:
+                    for request in self._down:
+                        self._go_to_floor(request)
+                else:
+                    if self._up:
+                        self._direction = Direction.Up
+                        for request in self._up:
+                            self._go_to_floor(request)
+                    else:
+                        self._direction = Direction.Idle
+            else:
+                closest = self._closest_request()
+                if closest > self._current_floor:
+                    self._direction = Direction.Up
+                elif closest < self._current_floor:
+                    self._direction = Direction.Down
+                    closest = self._highest_down()
+                else:
+                    if self._up:
+                        self._direction = Direction.Up
+                    if self._down:
+                        self._direction = Direction.Down
+                    continue
+                self._go_to_floor(closest)
+
+            # if not self._up and not self._down:
+            #     self._direction = Direction.Idle
+            #     self._go_to_floor(self._closest_request())
+            # # If there are no more up requests, then switch to satisfy down requests
+            # elif self._up and not self._down and not self._direction == Direction.Up:
+            #     print "Going up!"
+            #     self._direction = Direction.Up
+            #
+            # elif self._up and self._direction == Direction.Up:
+            #     for request in self._up:
+            #         self._go_to_floor(request)
+            # elif self._down and not self._up and not self._direction == Direction.Down:
+            #     print "Going down!"
+            #     self._direction = Direction.Down
+            # elif self._down and self._direction == Direction.Down:
+            #     for request in self._down:
+            #         self._go_to_floor(request)
 
 
 

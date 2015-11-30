@@ -1,7 +1,7 @@
 __author__ = 'Kevin Ting'
 import os
 import time
-from elevator import Elevator
+from elevator2 import Elevator
 
 def main():
     floor_num = input("Please enter the number of floors:")
@@ -10,9 +10,9 @@ def main():
         while True:
             elevator.get_request()
             print elevator
-            time.sleep(1)
-            elevator.execute_request()
-            print elevator
+            #time.sleep(1)
+            #elevator.execute_request()
+            #print elevator
     except KeyboardInterrupt:
         print "Exiting elevator simulator...."
 main()
