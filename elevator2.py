@@ -1,6 +1,5 @@
 from enum import Enum
 import os
-import sys
 from time import sleep
 
 
