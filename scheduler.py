@@ -136,7 +136,7 @@ class Scheduler:
                                 else:
                                     elevator._current_floor += 1
             print self
-            sleep(.5)
+            sleep(1)
 
 
 
@@ -160,5 +160,4 @@ class Scheduler:
                         self._down.append(request)
                         self._down.sort(key=lambda x: x.out_floor, reverse=True)
         except ValueError:
-            if raw_request == "reset":
-                self._go_to_floor(1)
+            print "Bad input"
