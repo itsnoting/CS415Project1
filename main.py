@@ -13,6 +13,7 @@ def main():
     try:
         while True:
             scheduler.get_request()
+            print scheduler
             scheduler.execute()
     except KeyboardInterrupt:
         print "Exiting elevator simulator...."
