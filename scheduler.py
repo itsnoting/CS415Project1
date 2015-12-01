@@ -1,4 +1,5 @@
 import sys
+from time import sleep
 
 from elevator import Elevator
 from elevator import Request
@@ -14,29 +15,49 @@ class Scheduler:
         self._down = []
         self._num_floors = num_floors
         for i in range(num_elev):
-            if i == 0:
-                self._ele_list.append(Elevator(self._up, self._down, i, num_floors, 9))
-            if i == 1:
-                self._ele_list.append(Elevator(self._up, self._down, i, num_floors, 6))
-            if i == 2:
-                self._ele_list.append(Elevator(self._up, self._down, i, num_floors, 1))
-
-
-
-            #self._ele_list.append(Elevator(self._up, self._down, i, num_floors, random.randint(1, num_floors)))
+            self._ele_list.append(Elevator(self._up, self._down, i, num_floors, random.randint(1, num_floors)))
 
     def __str__(self):
         if os.name == 'nt':
             os.system('CLS')
         else:
             os.system('clear')
+        ele_info = []
         result = "Current Occupants:\n"
         for i, ele in enumerate(self._ele_list):
-            result += "Elevator " + str(i) + ': '
+            result += "Elevator " + str(i) + ': \t\t'
             ele_req = ele._in_elevator_floors()
+
+            if len(ele._in_elevator_floors()) < 10:
+                num_floor = '0' + str(len(ele._in_elevator_floors()))
+            else:
+                num_floor = str(len(ele._in_elevator_floors()))
+
+            ele_info.append([ele, num_floor])
+            if ele._direction == Direction.Up:
+                dir_string = "Up"
+            elif ele._direction == Direction.Down:
+                dir_string = "Down"
+            else:
+                dir_string = "Idle"
             for r in ele_req:
                 result += ' ' + str(r.in_floor) + '=>' + str(r.out_floor)
-            result += '\t\t|Current Floor: ' + str(ele._current_floor) + ' |Direction: ' + str(ele._direction) +'\n'
+            result += '|Current Floor: ' + str(ele._current_floor) + ' |Direction: ' + dir_string +'\n'
+        for i in range(self._num_floors, 0, -1):
+            result += str(i) + "\t||----"
+            for ele in ele_info:
+                if ele[0]._current_floor == i:
+                    result += '[' + ele[1] + ']' + '---'
+                else:
+                    result += '-------'
+            result += '-||\t'
+            for r in self._up:
+                if r.in_floor == i and r.elevNum == -1:
+                    result += str(r.in_floor) + '=>' + str(r.out_floor) + ' '
+            result += '\n'
+        return result
+
+
         result += "Up:\t"
         for r in self._up:
             result += ' ' + str(r)
@@ -115,6 +136,7 @@ class Scheduler:
                                 else:
                                     elevator._current_floor += 1
             print self
+            sleep(.5)
 
 
 
