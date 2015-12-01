@@ -11,7 +11,7 @@ class Scheduler:
         self._up = []
         self._down = []
         for i in range(num_elev):
-            self._ele_list.append(Elevator(self._up, self._down, num_floors, random.randint(1, num_floors)))
+            self._ele_list.append(Elevator(self._up, self._down, i, num_floors, random.randint(1, num_floors)))
 
     # def __str__(self):
     #     if os.name == 'nt':
@@ -25,49 +25,68 @@ class Scheduler:
     #         for r in ele_req:
     #             result += ' ' + str(r.in_floor) + '=>' + str(r.out_floor)
 
-
     def execute(self):
-        for elevator in self._ele_list:
-            if elevator._direction == Direction.Up:
-                #Up
-                next_floor = elevator._find_bot_floor()
-                if elevator._current_floor == next_floor:
-                    elevator.visiting()
-                elif elevator._current_floor > next_floor:
-                    elevator._current_floor -= 1
-                else:
-                    elevator._current_floor += 1
-
-            elif elevator._direction == Direction.Down:
-                #Down
-                next_floor = elevator._find_top_floor()
-                if elevator._current_floor == next_floor:
-                    elevator.visiting()
-                elif elevator._current_floor > next_floor:
-                    elevator._current_floor -= 1
-                else:
-                    elevator._current_floor += 1
-
-            else:
-                #Idle
-                next_up_floor = elevator._find_bot_floor()
-                next_down_floor = elevator._find_bot_floor()
-                if abs(next_up_floor - elevator._current_floor) < abs(elevator._current_floor - next_down_floor):
-                    elevator._direction = Direction.Up
-                    if elevator._current_floor == next_up_floor:
-                        elevator.visiting()
-                    elif elevator._current_floor > next_up_floor:
-                        elevator._current_floor -= 1
+        while self._up or self._down:
+            for elevator in self._ele_list:
+                if elevator._direction == Direction.Up:
+                    if elevator._any_occupants():
+                        #Up
+                        next_floor = elevator._find_bot_floor()
+                        if elevator._current_floor == next_floor:
+                            elevator.visiting()
+                        elif elevator._current_floor > next_floor:
+                            elevator._current_floor -= 1
+                        else:
+                            elevator._current_floor += 1
                     else:
-                        elevator._current_floor += 1
-                else:
-                    elevator._direction = Direction.Down
-                    if elevator._current_floor == next_down_floor:
-                        elevator.visiting()
-                    elif elevator._current_floor > next_down_floor:
-                        elevator._current_floor -= 1
+                        elevator.update_goal_floor(self._up)
+                        if elevator.requested_floor():
+                            elevator.visiting()
+                            if not elevator._any_occupants():
+                                elevator._direction = Direction.Idle
+                        elif elevator._current_floor < elevator._goal_floor:
+                            elevator._current_floor += 1
+
+
+                elif elevator._direction == Direction.Down:
+                    if not elevator._any_occupants():
+                        #Down
+                        next_floor = elevator._find_top_floor()
+                        if elevator._current_floor == next_floor:
+                            elevator.visiting()
+                        elif elevator._current_floor > next_floor:
+                            elevator._current_floor -= 1
+                        else:
+                            elevator._current_floor += 1
                     else:
-                        elevator._current_floor += 1
+                        elevator.update_goal_floor(self._down)
+                        if elevator.requested_floor():
+                            elevator.visiting()
+                            if not elevator._any_occupants():
+                                elevator._direction = Direction.Idle
+                        elif elevator._current_floor < elevator._goal_floor:
+                            elevator._current_floor += 1
+
+                elif elevator._direction == Direction.Idle:
+                    #Idle
+                    next_up_floor = elevator._find_bot_floor()
+                    next_down_floor = elevator._find_bot_floor()
+                    if abs(next_up_floor - elevator._current_floor) < abs(elevator._current_floor - next_down_floor):
+                        elevator._direction = Direction.Up
+                        if elevator._current_floor == next_up_floor:
+                            elevator.visiting()
+                        elif elevator._current_floor > next_up_floor:
+                            elevator._current_floor -= 1
+                        else:
+                            elevator._current_floor += 1
+                    else:
+                        elevator._direction = Direction.Down
+                        if elevator._current_floor == next_down_floor:
+                            elevator.visiting()
+                        elif elevator._current_floor > next_down_floor:
+                            elevator._current_floor -= 1
+                        else:
+                            elevator._current_floor += 1
 
 
 
