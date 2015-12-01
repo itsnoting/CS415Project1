@@ -106,8 +106,7 @@ class Elevator:
             for r in self._up[:]:
                 if r.elevNum == self._elevator_num:
                     if r.out_floor == self._current_floor:
-                        print "removing ", r
-                        r.elevNum = -2
+                        print r, " Getting off"
                         self._up.remove(r)
                 elif r.elevNum == -1:
                     # Not in elevator
@@ -122,7 +121,7 @@ class Elevator:
             for r in self._down[:]:
                 if not r.elevNum == -1:
                     if r.out_floor == self._current_floor:
-                        r.elevNum = -2
+                        print r, " Getting off"
                         self._down.remove(r)
                 elif r.elevNum == -1:
                     # Not in elevator
