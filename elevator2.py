@@ -144,18 +144,23 @@ class Elevator:
         for r in direction:
             if r.in_elevator:
                 return True
+        return False
 
     def execute_request(self):
         while self._up or self._down:
             if self._direction == Direction.Up:
-                self._go_to(self._find_bot_floor())
-                if self._any_occupants(self._up):
+                if not self._any_occupants(self._up):
+                    self._go_to(self._find_bot_floor())
+                elif self._any_occupants(self._up):
                     for r in self._up:
                         self._go_to(r.out_floor)
 
             elif self._direction == Direction.Down:
                 if not self._any_occupants(self._down):
                     self._go_to(self._find_top_floor())
+                elif self._any_occupants(self._down):
+                    for r in self._down:
+                        self._go_to(r.out_floor)
 
     def get_request(self):
         try:
