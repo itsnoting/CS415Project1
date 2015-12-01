@@ -89,10 +89,10 @@ class Elevator:
     def visiting(self):
         if self._direction == Direction.Up:
             for r in self._up[:]:
-                if not r.elevNum == -1:
+                if r.elevNum == self._elevator_num:
                     if r.out_floor == self._current_floor:
                        self._up.remove(r)
-                else:
+                elif r.elevNum == -1:
                     # Not in elevator
                     if r.in_floor == self._current_floor:
                         r.elevNum = self._elevator_num
@@ -105,7 +105,7 @@ class Elevator:
                 if not r.elevNum == -1:
                     if r.out_floor == self._current_floor:
                         self._down.remove(r)
-                else:
+                elif r.elevNum == -1:
                     # Not in elevator
                     if r.in_floor == self._current_floor:
                         r.elevNum = self._elevator_num
