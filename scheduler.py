@@ -25,7 +25,7 @@ class Scheduler:
             ele_req = ele._in_elevator_floors()
             for r in ele_req:
                 result += ' ' + str(r.in_floor) + '=>' + str(r.out_floor)
-            result += 'Current Floor: ' + str(ele._current_floor) +'\n'
+            result += '\t\t|Current Floor: ' + str(ele._current_floor) +'\n'
         result += "Up:\t"
         for r in self._up:
             result += ' ' + str(r)
@@ -40,7 +40,7 @@ class Scheduler:
         while self._up or self._down:
             for elevator in self._ele_list:
                 if elevator._direction == Direction.Up:
-                    if elevator._any_occupants(elevator._up):
+                    if not elevator._any_occupants(elevator._up):
                         #Up
                         next_floor = elevator._find_bot_floor()
                         if elevator._current_floor == next_floor:

@@ -59,10 +59,10 @@ class Elevator:
     def _in_elevator_floors(self):
         requests = []
         for request in self._up:
-            if not request.elevNum == -1:
+            if request.elevNum == self._elevator_num:
                 requests.append(request)
         for request in self._down:
-            if not request.elevNum == -1:
+            if request.elevNum == self._elevator_num:
                 requests.append(request)
         return requests
 
