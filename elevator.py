@@ -1,3 +1,4 @@
+import sys
 from enum import Enum
 import os
 from time import sleep
@@ -17,7 +18,7 @@ class Request:
         self.elevNum = ele_num
 
     def __str__(self):
-        return "<" + self.in_floor + "=>" + self.out_floor + ' ' + self.ele_num + ">"
+        return "<" + str(self.in_floor) + "=>" + str(self.out_floor) + ' ' + str(self.elevNum) + ">"
 
 
 class Elevator:
@@ -27,16 +28,18 @@ class Elevator:
         self._up = up
         self._down = down
         self._num_floors = num_floors
-        self._direction = Direction.Up
-        self._goal_floor = None
+        self._direction = Direction.Idle
+        self._goal_floor = 0
         self._elevator_num = elevator_num
 
     def update_goal_floor(self, direction):
         if self._direction == Direction.Up:
+            self._goal_floor = 0
             for r in direction:
                 if r.elevNum == self._elevator_num and r.out_floor > self._goal_floor:
                     self._goal_floor = r.out_floor
         elif self._direction == Direction.Down:
+            self._goal_floor = self._num_floors + 1
             for r in direction:
                 if r.elevNum == self._elevator_num and r.out_floor < self._goal_floor:
                     self._goal_floor = r.out_floor
@@ -56,20 +59,20 @@ class Elevator:
     def _in_elevator_floors(self):
         requests = []
         for request in self._up:
-            if request.in_elevator:
+            if not request.elevNum == -1:
                 requests.append(request)
         for request in self._down:
-            if request.in_elevator:
+            if not request.elevNum == -1:
                 requests.append(request)
         return requests
 
     def _find_bot_floor(self):
         botfloor = self._num_floors + 1
         for r in self._up:
-            if r.in_floor < botfloor and not r.in_elevator:
+            if r.in_floor < botfloor and r.elevNum == -1:
                 botfloor = r.in_floor
         if botfloor > self._num_floors:
-            return self._current_floor
+            return sys.maxsize
         else:
             return botfloor
 
@@ -78,31 +81,34 @@ class Elevator:
         for r in self._down:
             if r.in_floor > topfloor:
                 topfloor = r.in_floor
-        return topfloor
+        if topfloor > 0:
+            return topfloor
+        else:
+            return sys.maxsize
 
     def visiting(self):
         if self._direction == Direction.Up:
             for r in self._up[:]:
-                if r.in_elevator:
+                if not r.elevNum == -1:
                     if r.out_floor == self._current_floor:
                        self._up.remove(r)
                 else:
                     # Not in elevator
                     if r.in_floor == self._current_floor:
-                        r.in_elevator = True
+                        r.elevNum = self._elevator_num
 
             if not self._up and self._down:
                 self._direction = Direction.Down
 
         elif self._direction == Direction.Down:
             for r in self._down[:]:
-                if r.in_elevator:
+                if not r.elevNum == -1:
                     if r.out_floor == self._current_floor:
                         self._down.remove(r)
                 else:
                     # Not in elevator
                     if r.in_floor == self._current_floor:
-                        r.in_elevator = True
+                        r.elevNum = self._elevator_num
             if not self._down and self._up:
                 self._direction = Direction.Up
 

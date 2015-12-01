@@ -20,12 +20,12 @@ class Scheduler:
         else:
             os.system('clear')
         result = "Current Occupants:\n"
-        for i, ele in self._ele_list:
-            result += "Elevator " + str(i) + ' '
+        for i, ele in enumerate(self._ele_list):
+            result += "Elevator " + str(i) + ': '
             ele_req = ele._in_elevator_floors()
             for r in ele_req:
                 result += ' ' + str(r.in_floor) + '=>' + str(r.out_floor)
-            result += '\n'
+            result += 'Current Floor: ' + str(ele._current_floor) +'\n'
         result += "Up:\t"
         for r in self._up:
             result += ' ' + str(r)
@@ -60,7 +60,7 @@ class Scheduler:
 
 
                 elif elevator._direction == Direction.Down:
-                    if not elevator._any_occupants():
+                    if not elevator._any_occupants(self._down):
                         #Down
                         next_floor = elevator._find_top_floor()
                         if elevator._current_floor == next_floor:
@@ -73,7 +73,7 @@ class Scheduler:
                         elevator.update_goal_floor(self._down)
                         if elevator.requested_floor():
                             elevator.visiting()
-                            if not elevator._any_occupants():
+                            if not elevator._any_occupants(self._up):
                                 elevator._direction = Direction.Idle
                         elif elevator._current_floor < elevator._goal_floor:
                             elevator._current_floor += 1
@@ -81,7 +81,7 @@ class Scheduler:
                 elif elevator._direction == Direction.Idle:
                     #Idle
                     next_up_floor = elevator._find_bot_floor()
-                    next_down_floor = elevator._find_bot_floor()
+                    next_down_floor = elevator._find_top_floor()
                     if abs(next_up_floor - elevator._current_floor) < abs(elevator._current_floor - next_down_floor):
                         elevator._direction = Direction.Up
                         if elevator._current_floor == next_up_floor:
