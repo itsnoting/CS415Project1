@@ -47,11 +47,11 @@ class Elevator:
     def requested_floor(self):
         if self._direction == Direction.Up:
             for r in self._up:
-                if r.elevNum == self._elevator_num and r.out_floor == self._current_floor or r.elevNum == 0 and r.in_floor == self._current_floor:
+                if (r.elevNum == self._elevator_num and r.out_floor == self._current_floor) or (r.elevNum == -1 and r.in_floor == self._current_floor):
                     return True
         elif self._direction == Direction.Down:
             for r in self._down:
-                if r.elevNum == self._elevator_num and r.out_floor == self._current_floor or r.elevNum == 0 and r.in_floor == self._current_floor:
+                if (r.elevNum == self._elevator_num and r.out_floor == self._current_floor) or (r.elevNum == -1 and r.in_floor == self._current_floor):
                     return True
         else:
             return False
@@ -79,7 +79,7 @@ class Elevator:
     def _find_top_floor(self):
         topfloor = 0
         for r in self._down:
-            if r.in_floor > topfloor:
+            if r.in_floor > topfloor and r.elevNum == -1:
                 topfloor = r.in_floor
         if topfloor > 0:
             return topfloor
@@ -115,7 +115,7 @@ class Elevator:
 
     def _any_occupants(self, direction):
         for r in direction:
-            if not r.elevNum == -1:
+            if r.elevNum == self._elevator_num:
                 return True
         return False
 
