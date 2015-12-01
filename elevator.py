@@ -28,7 +28,7 @@ class Elevator:
         self._up = up
         self._down = down
         self._num_floors = num_floors
-        self._direction = Direction.Up
+        self._direction = Direction.Idle
         self._goal_floor = 0
         self._elevator_num = elevator_num
 
@@ -107,6 +107,7 @@ class Elevator:
                 if r.elevNum == self._elevator_num:
                     if r.out_floor == self._current_floor:
                         print "removing ", r
+                        r.elevNum = -2
                         self._up.remove(r)
                 elif r.elevNum == -1:
                     # Not in elevator
@@ -121,6 +122,7 @@ class Elevator:
             for r in self._down[:]:
                 if not r.elevNum == -1:
                     if r.out_floor == self._current_floor:
+                        r.elevNum = -2
                         self._down.remove(r)
                 elif r.elevNum == -1:
                     # Not in elevator
