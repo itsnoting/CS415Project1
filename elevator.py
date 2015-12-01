@@ -11,7 +11,7 @@ class Direction(Enum):
 
 class Request:
 
-    def __init__(self, in_floor, out_floor, ele_num):
+    def __init__(self, in_floor, out_floor, ele_num = -1):
         self.in_floor = in_floor
         self.out_floor = out_floor
         self.elevNum = ele_num
@@ -109,7 +109,7 @@ class Elevator:
 
     def _any_occupants(self, direction):
         for r in direction:
-            if r.in_elevator:
+            if not r.elevNum == -1:
                 return True
         return False
 

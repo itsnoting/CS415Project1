@@ -3,6 +3,8 @@ import os
 import time
 from elevator2 import Elevator
 
+from scheduler import Scheduler
+
 def main():
     # floor_num = input("Please enter the number of floors:")
     # elevator = Elevator(floor_num)
@@ -15,4 +17,8 @@ def main():
     #         #print elevator
     # except KeyboardInterrupt:
     #     print "Exiting elevator simulator...."
+    scheduler = Scheduler(3, 10)
+    scheduler.get_request()
+    scheduler.execute()
+
 main()
