@@ -12,7 +12,16 @@ class Scheduler:
         self._down = []
         self._num_floors = num_floors
         for i in range(num_elev):
-            self._ele_list.append(Elevator(self._up, self._down, i, num_floors, random.randint(1, num_floors)))
+            if i == 0:
+                self._ele_list.append(Elevator(self._up, self._down, i, num_floors, 9))
+            if i == 1:
+                self._ele_list.append(Elevator(self._up, self._down, i, num_floors, 6))
+            if i == 2:
+                self._ele_list.append(Elevator(self._up, self._down, i, num_floors, 1))
+
+
+
+            #self._ele_list.append(Elevator(self._up, self._down, i, num_floors, random.randint(1, num_floors)))
 
     def __str__(self):
         if os.name == 'nt':
@@ -25,7 +34,7 @@ class Scheduler:
             ele_req = ele._in_elevator_floors()
             for r in ele_req:
                 result += ' ' + str(r.in_floor) + '=>' + str(r.out_floor)
-            result += '\t\t|Current Floor: ' + str(ele._current_floor) +'\n'
+            result += '\t\t|Current Floor: ' + str(ele._current_floor) + ' |Direction: ' + str(ele._direction) +'\n'
         result += "Up:\t"
         for r in self._up:
             result += ' ' + str(r)
@@ -76,7 +85,7 @@ class Scheduler:
                             if not elevator._any_occupants(self._up):
                                 elevator._direction = Direction.Idle
                         elif elevator._current_floor < elevator._goal_floor:
-                            elevator._current_floor += 1
+                            elevator._current_floor -= 1
 
                 elif elevator._direction == Direction.Idle:
                     #Idle

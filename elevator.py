@@ -32,6 +32,17 @@ class Elevator:
         self._goal_floor = 0
         self._elevator_num = elevator_num
 
+    def __str__(self):
+        result = ""
+        for r in self._up:
+            if r.elevNum == self._elevator_num:
+                result += str(r) + ' '
+        for r in self._down:
+            if r.elevNum == self._elevator_num:
+                result += str(r) + ' '
+        result += ' |Current Floor: ' + str(self._current_floor) +'\n'
+        return result
+
     def update_goal_floor(self, direction):
         if self._direction == Direction.Up:
             self._goal_floor = 0
@@ -47,11 +58,15 @@ class Elevator:
     def requested_floor(self):
         if self._direction == Direction.Up:
             for r in self._up:
-                if (r.elevNum == self._elevator_num and r.out_floor == self._current_floor) or (r.elevNum == -1 and r.in_floor == self._current_floor):
+                if (r.elevNum == self._elevator_num and r.out_floor == self._current_floor):
+                    return True
+                if (r.elevNum == -1 and r.in_floor == self._current_floor):
                     return True
         elif self._direction == Direction.Down:
             for r in self._down:
-                if (r.elevNum == self._elevator_num and r.out_floor == self._current_floor) or (r.elevNum == -1 and r.in_floor == self._current_floor):
+                if (r.elevNum == self._elevator_num and r.out_floor == self._current_floor):
+                    return True
+                if (r.elevNum == -1 and r.in_floor == self._current_floor):
                     return True
         else:
             return False
