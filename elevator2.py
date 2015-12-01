@@ -113,24 +113,24 @@ class Elevator:
             if not self._up and self._down:
                 self._direction = Direction.Down
 
-        elif self._direction == Direction.Down:
-            for r in self._down[:]:
-                if r.in_elevator:
-                    if r.out_floor == self._current_floor:
-                        self._down.remove(r)
-                else:
-                    # Not in elevator
-                    if r.in_floor == self._current_floor:
-                        r.in_elevator = True
-            if not self._down and self._up:
-                self._direction = Direction.Up
+        # elif self._direction == Direction.Down:
+        #     for r in self._down[:]:
+        #         if r.in_elevator:
+        #             if r.out_floor == self._current_floor:
+        #                 self._down.remove(r)
+        #         else:
+        #             # Not in elevator
+        #             if r.in_floor == self._current_floor:
+        #                 r.in_elevator = True
+        #     if not self._down and self._up:
+        #         self._direction = Direction.Up
 
     def _go_to(self, floor):
         print self._current_floor
         for i in range(abs(self._current_floor - floor)):
-            if floor < self._current_floor:
-                self._current_floor -= 1
-            elif floor > self._current_floor:
+            # if floor < self._current_floor:
+            #     self._current_floor -= 1
+            if floor > self._current_floor:
                 if self._find_bot_floor() == self._current_floor:
                     self.visiting()
                 self._current_floor += 1
@@ -152,15 +152,18 @@ class Elevator:
                 if not self._any_occupants(self._up):
                     self._go_to(self._find_bot_floor())
                 elif self._any_occupants(self._up):
-                    for r in self._up:
-                        self._go_to(r.out_floor)
+                    nextExit = self._num_floors + 1
+                    for r in self._up[:]:
+                        if r.in_elevator and r.out_floor < nextExit:
+                            nextExit = r.out_floor
+                    self._go_to(nextExit)
 
-            elif self._direction == Direction.Down:
-                if not self._any_occupants(self._down):
-                    self._go_to(self._find_top_floor())
-                elif self._any_occupants(self._down):
-                    for r in self._down:
-                        self._go_to(r.out_floor)
+            # elif self._direction == Direction.Down:
+            #     if not self._any_occupants(self._down):
+            #         self._go_to(self._find_top_floor())
+            #     elif self._any_occupants(self._down):
+            #         for r in self._down:
+            #             self._go_to(r.out_floor)
 
     def get_request(self):
         try:
