@@ -29,6 +29,7 @@ class Scheduler:
     def execute(self):
         for elevator in self._ele_list:
             if elevator._direction == Direction.Up:
+                #Up
                 next_floor = elevator._find_bot_floor()
                 if elevator._current_floor == next_floor:
                     elevator.visiting()
@@ -38,6 +39,7 @@ class Scheduler:
                     elevator._current_floor += 1
 
             elif elevator._direction == Direction.Down:
+                #Down
                 next_floor = elevator._find_top_floor()
                 if elevator._current_floor == next_floor:
                     elevator.visiting()
@@ -47,6 +49,7 @@ class Scheduler:
                     elevator._current_floor += 1
 
             else:
+                #Idle
                 next_up_floor = elevator._find_bot_floor()
                 next_down_floor = elevator._find_bot_floor()
                 if abs(next_up_floor - elevator._current_floor) < abs(elevator._current_floor - next_down_floor):
